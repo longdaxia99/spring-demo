@@ -1,5 +1,6 @@
 package com.xiangxue.jack.service.area;
 
+import com.xiangxue.jack.annotation.TargetSource;
 import com.xiangxue.jack.dao.CommonMapper;
 import com.xiangxue.jack.pojo.ConsultConfigArea;
 import com.xiangxue.jack.service.goods.GoodsService;
@@ -43,14 +44,14 @@ public class AreaServiceImpl implements AreaService {
 
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT, readOnly = false, rollbackFor = RuntimeException.class)
     @Override
-    public String queryAreaFromDB(Map param) {
+    public List<ConsultConfigArea> queryAreaFromDB(Map param) {
         logger.info("================从mysql里面查询数据 事务1========================");
         List<ConsultConfigArea> areas = commonMapper.queryAreaByAreaCode(param);
 
 //        new Thread(() -> areaService.queryAreaFromRedisOne(null)).start();
 
 //        areaService.queryAreaFromRedisOne(null);
-        return "OK";
+        return areas;
     }
 
     @Transactional
@@ -71,7 +72,9 @@ public class AreaServiceImpl implements AreaService {
         return "OK";
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+
+    @TargetSource("ds2")
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public int addArea(ConsultConfigArea area) {
         int i = commonMapper.addArea(area);
